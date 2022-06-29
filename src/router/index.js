@@ -8,10 +8,14 @@ const publicRoutes = [
     component: () => import('../views/login')
   },
 
+  // {
+  //   path: '/uste',
+  //   name: 'uste',
+  //   component: () => import('../uste/uste.vue')
+  // },
   {
-    path: '/uste',
-    name: 'uste',
-    component: () => import('../uste/uste.vue')
+    path:'/',
+    component:() => import ('../layout')
   }
 ]
 const router = createRouter({
