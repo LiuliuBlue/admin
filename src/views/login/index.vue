@@ -43,14 +43,18 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import UserApi from '../../api/user'
+import util from '../../utils/util'
+import { useStore } from 'vuex'
+// import UserApi from '../../api/user'
 import { reactive, ref, computed } from 'vue'
 import { validatePassword } from './rule'
 import md5 from 'md5'
 
 const inputType = ref('password')
 const LoginForm = ref()
-const $router = useRouter()
+const store = useStore()
+const router = useRouter()
+
 const loginForm = reactive({
   username: 'super-admin',
   password: '123456'
@@ -80,16 +84,28 @@ const passwordIconStatus = computed(() => {
 /**
  * 登录方式
  */
+// const handleLoginSubmit = async () => {
+//   if (!LoginForm.value) return
+//   await LoginForm.value.validate(async (valid) => {
+//     if (valid) {
+//       alert('登录')
+//       loginForm.password = md5(loginForm.password)
+//       const response = await UserApi.login(loginForm)
+//       console.log(response)
+//     }
+//     $router.push({ path: 'uste/uste' })
+//   })
+// }
 const handleLoginSubmit = async () => {
   if (!LoginForm.value) return
-  await LoginForm.value.validate(async (valid) => {
+  await LoginForm.value.validate(async valid => {
     if (valid) {
-      alert('登录')
-      loginForm.password = md5(loginForm.password)
-      const response = await UserApi.login(loginForm)
-      console.log(response)
+      const newLoginForm = util.deepCopy(loginForm)
+      newLoginForm.password = md5(newLoginForm.password)
+
+      const response = await store.dispatch('user/login', newLoginForm)
+      if (response.token) router.push('/')
     }
-    $router.push({ path: 'uste/uste' })
   })
 }
 
